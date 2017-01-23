@@ -4,7 +4,7 @@
 *	Descrição:  Classe para geração e leitura de arquivos retorno remessa em conta Banrisul.
 *				Padrão FEBRABAN
 * 	Autor: Thiago R. Gham
-* 	Versão: 0.1	 25-11-2015
+* 	Versão: 1.0	 25-11-2015
 	
 	LAYOUT DOS RESGISTROS                                                          
 	Header 		- Tipo 0 
@@ -212,7 +212,6 @@ class Banrisul{
 	* 	@return 
 	*/
 	function salvaArquivo($caminho) {
-		//chmod($caminho, '0755');
 		$nm_arquivo = "banrisul".date('YmdHi').".txt";
 		$caminho    = $caminho . $nm_arquivo;
 		file_put_contents($caminho, $this->STRING);
@@ -273,10 +272,10 @@ class Banrisul{
 	*/
 	private function processar0($linha){
 		$vlinha = array();																														
-		$vlinha["constante1"]  = substr($linha, 0, 19); 	 	//001 019 02RETORNO01COBRANCA (constante)
-		$vlinha["cd_agencia"]  = substr($linha, 25, 4); 	//027 039 CÓDIGO DE CEDENTE AAAACCCCCCCCC 0943
-		$vlinha["cd_cedente"]  = substr($linha, 29, 9); 	//027 039 CÓDIGO DE CEDENTE AAAACCCCCCCCC 078026067
-		$vlinha["constante2"]  = substr($linha, 76, 11); 		//077 087 041BANRISUL (constante)
+		$vlinha["constante1"]  = substr($linha, 0, 19); 	
+		$vlinha["cd_agencia"]  = substr($linha, 25, 4); 	
+		$vlinha["cd_cedente"]  = substr($linha, 29, 9); 	
+		$vlinha["constante2"]  = substr($linha, 76, 11); 	
 		return $vlinha;
 	}
 	/*
@@ -286,11 +285,11 @@ class Banrisul{
 	*/
 	private function processar1($linha){
 		$vlinha = array();																														
-		$vlinha["inscricao"]  	  			= substr($linha, 1, 2); 		//002 003 TIPO DE INSCRIÇÃO: 01 – CPF; 02 – CNPJ.
-		$vlinha["cpf_cnpj"]   	  			= substr($linha, 3, 14); 		//004 017 cpf_cnpj "09110655000197"
-		$vlinha["cd_agencia1"]    			= substr($linha, 17, 3); 	//018 030 CÓDIGO DE CEDENTE AAAACCCCCCCCC 0943
-		$vlinha["cd_cedente"]  	  			= substr($linha, 20, 9); 	//018 030 CÓDIGO DE CEDENTE AAAACCCCCCCCC 078026067
-		$vlinha["tipo_cobranca"]  			= substr($linha, 29, 6); 	//031 036 ESPÉCIE DE COBRANÇA 80507
+		$vlinha["inscricao"]  	  			= substr($linha, 1, 2); 	
+		$vlinha["cpf_cnpj"]   	  			= substr($linha, 3, 14); 		
+		$vlinha["cd_agencia1"]    			= substr($linha, 17, 3); 	
+		$vlinha["cd_cedente"]  	  			= substr($linha, 20, 9); 	
+		$vlinha["tipo_cobranca"]  			= substr($linha, 29, 6); 	
 		$vlinha["cd_banco_cobrador"]    	= substr($linha, 165, 3); 
 		$vlinha["cd_agencia_cobradora"]    	= substr($linha, 169, 4);
 		$vlinha["dm_moeda"]    				=+substr($linha, 342, 1); 
@@ -349,10 +348,10 @@ class Banrisul{
 					}
 				}
 				$vlinha["tx_ocorrencia_erro"] = $tx_ocorrencia_erro;
-				$vlinha["dt_ocorrencia"]  = trim(substr($linha,114,2)) == '' ? 'null' : '20'.substr($linha,114,2).'-'.substr($linha,112,2).'-'.substr($linha,110,2); substr($linha, 110, 6); // 150116 111 116 DATA DA OCORRÊNCIA PARA O BANCO dt_pagto
-				$vlinha["cd_bloqueto"]    = trim(sprintf("%8d",substr($linha, 116, 10))); //substr($linha, 116, 10); //117 126 SEU NÚMERO cd_bloqueto
+				$vlinha["dt_ocorrencia"]  = trim(substr($linha,114,2)) == '' ? 'null' : '20'.substr($linha,114,2).'-'.substr($linha,112,2).'-'.substr($linha,110,2); substr($linha, 110, 6); 
+				$vlinha["cd_bloqueto"]    = trim(sprintf("%8d",substr($linha, 116, 10))); 
 				$vlinha["dt_vencto"]      = trim(substr($linha,150,2)) == '' ? 'null' : '20'.substr($linha,150,2).'-'.substr($linha,148,2).'-'.substr($linha,146,2);
-				$vlinha["vl_titulo"]      = floatval(substr($linha, 152, 13)); //153 165 VALOR DO TÍTULO
+				$vlinha["vl_titulo"]      = floatval(substr($linha, 152, 13));
 				$vlinha["dt_pagto"]       = rtrim(substr($linha,114,2)) == '' ? 'null' : '20'.substr($linha,114,2).'-'.substr($linha,112,2).'-'.substr($linha,110,2);
 				$vlinha["dt_credito"]     = rtrim(substr($linha,299,2)) == '' ? 'null' : '20'.substr($linha,299,2).'-'.substr($linha,297,2).'-'. substr($linha,295,2);
 				break;
@@ -697,6 +696,3 @@ class Banrisul{
 		return str_repeat('0',$numero);
 	}
 }
-
-
-
