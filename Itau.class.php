@@ -1,10 +1,9 @@
 <?php 
- 
 /*
 *	Descrição:  Classe para geração e leitura de arquivos retorno remessa em conta Itau.
 *				Padrão FEBRABAN
 * 	Autor: Thiago R. Gham
-* 	Versão: 0.1	 25-11-2015
+* 	Versão: 1.0	 25-11-2015
 	
 	LAYOUT DOS RESGISTROS                                                          
 	Header 		- Tipo 0 
@@ -156,7 +155,6 @@ class Itau{
 	* 	@return 
 	*/
 	function salvaArquivo($caminho) {
-		//chmod($caminho, '0755');
 		$nm_arquivo = "Itau".date('YmdHi').".txt";
 		$caminho    = $caminho . $nm_arquivo;
 		file_put_contents($caminho, $this->STRING);
@@ -230,39 +228,13 @@ class Itau{
 	* 	@return array Retorna um vetor contendo os dados dos campos do header do arquivo.
 	*/
 	private function processar1($linha){
-		/*
-		$cd_agencia				= substr($TX_LINHA,17,4);
-					$cd_cedente				= substr($TX_LINHA,23,5);
-					$pgano					= "20".substr($TX_LINHA,114,2);
-					$pgmes					= substr($TX_LINHA,112,2);
-					$pgdia					= substr($TX_LINHA,110,2);
-					$cd_arquivo				= $cd_arquivo;
-					$nr_linha				= substr($TX_LINHA,396,6);
-					$cd_bloqueto			= substr($TX_LINHA,62,8);
-					$cd_bloqueto			= trim(sprintf("%8d",$cd_bloqueto));
-					$dt_pagto				= "20".substr($TX_LINHA,114,2)."-".substr($TX_LINHA,112,2)."-". substr($TX_LINHA,110,2);
-					$cd_banco_cobrador		= substr($TX_LINHA,165,3);
-					$cd_agencia_cobradora	= substr($TX_LINHA,168,5);
-					$vl_despesas_cobranca	= substr($TX_LINHA,175,13) / 100;
-					$vl_outras_despesas		= "0.00"; // NAO TEM NO MANUAL
-					$vl_abatimento			= substr($TX_LINHA,227,13) / 100;
-					$vl_descontos			= substr($TX_LINHA,240,13) / 100;
-					$vl_pagto				= substr($TX_LINHA,253,13) / 100;
-					$vl_juros				= substr($TX_LINHA,266,13) / 100;
-					$vl_outros_recebimentos	= substr($TX_LINHA,279,13) / 100;
-					$vl_pagto				= $vl_pagto + $vl_juros;
-					$dt_credito				= "20".substr($TX_LINHA,299,2)."-".substr($TX_LINHA,297,2)."-". substr($TX_LINHA,295,2);
-					$dm_moeda				= +substr($TX_LINHA,342,1);
-					$vl_creditado			= $vl_pagto;
-					$vl_pagto				= $vl_pagto + $vl_despesas_cobranca;
-					$dt_pagto_aux		    = $dt_pagto;
-		 */
+
 		$vlinha = array();																														
-		$vlinha["inscricao"]  	  			= substr($linha, 1, 2); 		//002 003 TIPO DE INSCRIÇÃO: 01 – CPF; 02 – CNPJ.
-		$vlinha["cpf_cnpj"]   	  			= substr($linha, 3, 14); 		//004 017 cpf_cnpj "09110655000197"
-		$vlinha["cd_agencia1"]    			= substr($linha, 17, 3); 	//018 030 CÓDIGO DE CEDENTE AAAACCCCCCCCC 0943
-		$vlinha["cd_cedente"]  	  			= substr($linha, 20, 9); 	//018 030 CÓDIGO DE CEDENTE AAAACCCCCCCCC 078026067
-		$vlinha["tipo_cobranca"]  			= substr($linha, 29, 6); 	//031 036 ESPÉCIE DE COBRANÇA 80507
+		$vlinha["inscricao"]  	  			= substr($linha, 1, 2); 		
+		$vlinha["cpf_cnpj"]   	  			= substr($linha, 3, 14); 		
+		$vlinha["cd_agencia1"]    			= substr($linha, 17, 3); 	
+		$vlinha["cd_cedente"]  	  			= substr($linha, 20, 9); 	
+		$vlinha["tipo_cobranca"]  			= substr($linha, 29, 6); 	
 		$vlinha["cd_banco_cobrador"]    	= substr($linha, 165, 3); 
 		$vlinha["cd_agencia_cobradora"]    	= substr($linha, 169, 4);
 		$vlinha["dm_moeda"]    				=+substr($linha, 342, 1); 
@@ -392,22 +364,14 @@ class Itau{
 								 $cd_ocorrencia, $dt_vencto, $vl_titulo, $dt_emissao, $vl_mora, $dt_desconto, $vl_desconto, $vl_iof, $vl_abatimento, 
 								 $cpf_cnpj, $nm_pagador, $endereco_pagador, $bairro_pagador, $cep_pagador, $nm_cidade_pagador, $uf_pagador, 
 								 $nm_avalista, $dt_mora, $nr_dias_mora, $nr_sequencia_registro){
-		$this->escreveLinha('1' //TIPO DE REGISTRO
-							//CÓDIGO DE INSCRIÇÃO (1-CPF/2-CNPJ)
+		$this->escreveLinha('1' 
 							.$this->formataCampoNumerico($this->identificacaoCPFCNPJ($cpf_cnpj_empresa), 2)
-							//NÚMERO DE INSCRIÇÃO CPF/CNPJ 
 							.$this->formataCampoNumerico($cpf_cnpj_empresa, 14)
-							//AGÊNCIA
 							.$this->formataCampoNumerico($cd_agencia, 4)
-							//ZEROS
 							.'00'
-							//CONTA
 							.$this->formataCampoNumerico(substr($cd_ctacor, 0, 5), 5)
-							//DAC
 							.$this->formataCampoNumerico(substr($cd_ctacor, 5, 1), 1)
-							//BRANCOS
 							.$this->espacosBrancos(4)
-							//INSTRUÇÃO/ALEGAÇÃO
 							/*
 							*Deve ser preenchido na remessa somente quando utilizados, 
 							* na posição 109-110, os códigos de ocorrência 35 – Cancelamento de Instrução e 38 
@@ -415,81 +379,43 @@ class Itau{
 							* Para os demais códigos de ocorrência este campo deverá ser preenchido com zeros. 
 							*/
 							.$this->formataCampoNumerico($cd_alegacao, 4)
-							//USO DA EMPRESA
 							.$this->formataCampoString($cd_titulo, 25)
-							//NOSSO NÚMERO
 							.$this->formataCampoNumerico($cd_bloqueto, 8)
-							//QTDE DE MOEDA
 							.$this->formataCampoNumerico(0, 13)
-							//Nº DA CARTEIRA
 							.$this->formataCampoNumerico($cd_carteira, 3)
-							//USO DO BANCO - IDENTIFICAÇÃO DA OPERAÇÃO NO BANCO
 							.$this->espacosBrancos(21) 
-							//CARTEIRA (VERIFICAR)
 							.'|'.$this->formataCampoString($carteira_variavel, 1).'|'
-							//CÓD. DE OCORRÊNCIA (1-REMESSA/2-BAIXA)
 							.$this->formataCampoString($cd_ocorrencia, 2)
-							//Nº DO DOCUMENTO 
 							.$this->formataCampoNumerico($cd_bloqueto . $this->digitoNossoNumero($cd_agencia.substr($cd_ctacor, 0, 5).$cd_carteira.$cd_bloqueto), 10)
-							//VENCIMENTO
 							.$this->formataCampoNumerico($dt_vencto, 6)
-							 //VALOR DO TÍTULO
 							.$this->formataCampoNumerico($vl_titulo, 13)
-							//CÓDIGO DO BANCO  = OK
 							.'341' 
-							//AGÊNCIA COBRADORA AGÊNCIA ONDE O TÍTULO SERÁ COBRADO
 							.$this->formataCampoNumerico(0, 5)
-							//ESPÉCIE (06 CONTRATO)
 							.$this->formataCampoString(ESPECIE, 2)
-							//ACEITE 
 							.$this->formataCampoString(ACEITO, 1)
-							//DATA DE EMISSÃO
 							.$this->formataCampoNumerico($dt_emissao, 6)
-							//INSTRUÇÃO1 (90 - NO VENCIMENTO PAGÁVEL EM QUALQUER AGÊNCIA BANCÁRIA)
 							.$this->formataCampoNumerico(90, 2)
-							//INSTRUÇÃO2 (05 - RECEBER CONFORME INSTRUÇÕES NO PRÓPRIO TÍTULO)
 							.$this->formataCampoNumerico('05', 2)
-							//JUROS DE 1 DIA
 							.$this->formataCampoNumerico($vl_mora, 13)
-							//DESCONTO ATÉ
 							.$this->formataCampoNumerico($dt_desconto, 6)
-							//VALOR DO DESCONTO
 							.$this->formataCampoNumerico($vl_desconto, 13)
-							//VALOR DO I.O.F.
 							.$this->formataCampoNumerico($vl_iof, 13)
-							//ABATIMENTO
 							.$this->formataCampoNumerico($vl_abatimento, 13)
-							//CÓDIGO DE INSCRIÇÃO
 							.$this->formataCampoNumerico($this->identificacaoCPFCNPJ($cpf_cnpj), 2)
-							//NÚMERO DE INSCRIÇÃO
 							.$this->formataCampoNumerico($cpf_cnpj, 14)
-							//NOME DO PAGADOR
 							.$this->formataCampoString(strtoupper($nm_pagador), 30)
-							//BRANCOS
 							.$this->espacosBrancos(10)
-							//LOGRADOURO
 							.$this->formataCampoString(strtoupper($endereco_pagador), 40)
-							//BAIRRO
 							.$this->formataCampoString(strtoupper($bairro_pagador), 12)
-							//CEP
 							.$this->formataCampoNumerico($cep_pagador, 8)
-							//CIDADE
 							.$this->formataCampoString(strtoupper($nm_cidade_pagador), 15)
-							//ESTADO
 							.$this->formataCampoString($uf_pagador,2)
-							//SACADOR/AVALISTA
 							.$this->espacosBrancos(30)
-							//BRANCOS
 							.$this->espacosBrancos(4)
-							//BRANCOS = OK
 							.$this->formataCampoNumerico($dt_mora, 6)
-							//DATA DE MORA = OK
 							.$this->formataCampoNumerico($nr_dias_mora, 2)
-							//PRAZO = OK
 							.$this->espacosBrancos(1)
-							//BRANCOS = OK
 							.$this->formataCampoNumerico($nr_sequencia_registro, 6));
-							//NÚMERO SEQÜENCIAL = OK
 	}
 	/*
 	*	Descrição: 	TRAILLER
@@ -501,7 +427,6 @@ class Itau{
 							.$this->espacosBrancos(393)
 							.$this->formataCampoNumerico($nr_sequencia_registro, 6));
 	}
-
 	/*
 	*	NC (número de controle), que é calculado de acordo com o módulo 10 e o módulo 11
 	* 	@param $nosso_numero bloqueto
@@ -641,6 +566,3 @@ class Itau{
 		return str_repeat('0',$numero);
 	}
 }
-
-
-
