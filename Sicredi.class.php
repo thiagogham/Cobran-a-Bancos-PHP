@@ -4,7 +4,7 @@
 *	Descrição:  Classe para geração e leitura de arquivos retorno remessa em conta Sicredi.
 *				Padrão FEBRABAN
 * 	Autor: Thiago R. Gham
-* 	Versão: 0.1	 18-10-2016
+* 	Versão: 1.0	 18-10-2016
 */
 /*
 1 = Banco emite e Processa o registro.
@@ -507,15 +507,11 @@ class Sicredi{
 							.$this->espacosBrancos(6)
 							.$this->formataCampoNumerico($dt_gravacao,8)//Data da Instrução AAAAMMDD
 							.$this->espacosBrancos(1)
-							//.'N'//Postagem do título
 							.$this->formataCampoString($cd_tipo_postagem,1)//“S” - Para postar o título diretamente ao pagador “N” - Não postar e remeter o título para o beneficiário
 							.$this->espacosBrancos(1)
 							.$this->formataCampoString($cd_tipo_emissao,1)// “A” – Impressão é feita pelo Sicredi “B” – Impressão é feita pelo Beneficiário
-							//.'B'//“B” – Impressão é feita pelo Beneficiário
 							.$this->formataCampoString($nr_parcela,2)//Número da parcela do carnê
-							//.$this->espacosBrancos(2)//Na Frugui está sem
 							.$this->formataCampoString($nr_total_parcelas,2)//Número total de parcelas do carnê
-							//.$this->espacosBrancos(2)//Na Frugui está sem
 							.$this->espacosBrancos(4)
 							.$this->formataCampoNumerico($vl_desconto,10)//Valor de desconto por dia de antecipação
 							.$this->formataCampoNumerico($pc_multa,4)//093 a 096 Percentual de multa 004
@@ -526,7 +522,6 @@ class Sicredi{
 							.$this->formataCampoNumerico($vl_titulo,13)
 							.$this->espacosBrancos(9)
 							.$this->formataCampoString(ESPECIE_DOC,1)
-							//.'N'//Coloquei N pq no da frugui está N
 							.'S'//Aceite do título S ou N
 							.$this->formataCampoNumerico($dt_emissao,6)//Data de emissão DDMMAA
 							.'00'//Instrução de protesto automático  “00” - Não protestar automaticamente
@@ -739,6 +734,3 @@ class Sicredi{
 		return str_repeat('0',$numero);
 	}
 }
-
-
-
