@@ -4,7 +4,7 @@
 *	Descrição:  Classe para geração e leitura de arquivos retorno remessa em conta Bradesco.
 *				Padrão FEBRABAN
 * 	Autor: Thiago R. Gham
-* 	Versão: 0.1	 21-03-2016
+* 	Versão: 1.0	 21-03-2016
 	
 	LAYOUT DOS RESGISTROS                                                          
 	Remessa: 
@@ -189,7 +189,9 @@ class Bradesco{
 	* 	@return array Retorna um vetor associativo contendo os valores_linha processada.
 	*/
 	function processarLinha($linha) {
-		if(trim($linha) == '') die('A linha está vazia.');
+		if(trim($linha) == '') {
+			die('A linha está vazia.');
+		}
 		/*Identificação do Registro*/
 		$processar = 'processar'.substr($linha,0,1);
 		if(method_exists('Bradesco', $processar)){
@@ -248,7 +250,7 @@ class Bradesco{
 		$vlinha["cd_ctacor"] 				= rtrim(substr($linha, 29, 6)); 	// (*)  6 Identificação da Empresa Beneficiário no Banco
 		$vlinha["cd_bloqueto"] 				= rtrim(substr($linha, 37, 25)); 	//     25 Nº Controle do Participante
 		$vlinha["cd_bloqueto_dv"]			= rtrim(substr($linha, 70, 12)); 	// (*) 12 Identificação do Título no Banco
-		if(empty($vlinha["cd_bloqueto"])){//000005458058
+		if(empty($vlinha["cd_bloqueto"])){
 			$vlinha["cd_bloqueto"] = substr($vlinha["cd_bloqueto_dv"], 5, 6);
 		}
 		$vlinha["cd_carteira"] 				= rtrim(substr($linha, 107, 1)); 	//     1 Carteira
@@ -256,7 +258,6 @@ class Bradesco{
 		$vlinha["tx_ocorrencia"]  			= rtrim($this->descricaoRetornoBanco($vlinha["cd_ocorrencia"]));
 		$vlinha["dt_ocorrencia"]			= rtrim(substr($linha, 110, 6)); 	// (*) 6 Data Ocorrência no Banco
 		$vlinha["cd_titulo"] 				= rtrim(substr($linha, 116, 10)); 	//    10 Número do Documento
-		//$vlinha["cd_bloqueto"] 			= rtrim(substr($linha, 126, 20)); 	// (*)  20 dentificação do Título no Banco
 		$vlinha["dt_vencto"] 				= rtrim(substr($linha, 146, 6)); 	//    6 Data Vencimento do Título
 		$vlinha["vl_titulo"] 				= rtrim(substr($linha, 152, 13)); 	//    13 Valor do Título
 		$vlinha["cd_banco_cobrador"] 		= rtrim(substr($linha, 165, 3)); 	// (*) 3 Banco Cobrador
@@ -273,8 +274,6 @@ class Bradesco{
 		$vlinha["vl_pagto"] 				= $vlinha["vl_pagto"] + $vlinha["vl_juros"];
 		$vlinha["vl_creditado"] 			= $vlinha["vl_pagto"] - $vlinha["vl_despesas_cobranca"];
 		$vlinha["cd_confirmacao"] 			= trim(substr($linha, 294, 1)); 	// A – Aceito D – Desprezado
-		
-		//$vlinha["tx_ocorrencia_erro"] 	= $this->descricaoErroRetornoBanco($vlinha["cd_ocorrencia_erro"]);
 		$vlinha["dt_credito"]     			= rtrim(substr($linha,299,2)) == '' ? 'null' : '20'.substr($linha,299,2).'-'.substr($linha,297,2).'-'. substr($linha,295,2);
 		$vlinha["cd_origem"] 				= rtrim(substr($linha, 301, 3));
 		 
@@ -339,10 +338,10 @@ class Bradesco{
 							.$this->formataCampoNumerico('',7)//013 a 019 Conta Corrente (opcional) 007
 							.$this->formataCampoString('',1)//020 a 020 Dígito da Conta Corrente (opcional) 
 							.$this->formataCampoString('0'		//021 a 037 Identificação da Empresa Beneficiária no Banco 017 001 
-								.$this->formataCampoNumerico($cd_carteira,3)//009
-								.$this->formataCampoNumerico($cd_agencia,5)//01878
-								.$this->formataCampoNumerico($cd_ctacor_sem_digito,7)//0013089 13089
-								.$this->formataCampoNumerico($digito_cd_ctacor,1),17)
+							.$this->formataCampoNumerico($cd_carteira,3)//009
+							.$this->formataCampoNumerico($cd_agencia,5)//01878
+							.$this->formataCampoNumerico($cd_ctacor_sem_digito,7)//0013089 13089
+							.$this->formataCampoNumerico($digito_cd_ctacor,1),17)
 							.$this->formataCampoString($cd_bloqueto,25)//038 a 062 Nº Controle do Participante 025
 							.$this->formataCampoNumerico(0,3)//063 a 065 Código do Banco a ser debitado na Câmara de Compensação 003
 							.$this->formataCampoNumerico($cd_multa,1)//066 a 066 Campo de Multa 001
@@ -583,6 +582,3 @@ class Bradesco{
 		return str_repeat('0',$numero);
 	}
 }
-
-
-
