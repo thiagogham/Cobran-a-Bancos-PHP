@@ -118,7 +118,7 @@ Mercantil (DM), 12-Duplicata de Prestação de Serviço (DS) e 08-Letra de Câmb
 Para  a  modalidade  Vendor  somente  são  permitidas  as Espécies:  01–Duplicata  Mercantil  (DM)  e 
 12–Duplicata de Prestação de Serviço (DS). 
 */
-class /*Remessa*/BancoBrasil{
+class BancoBrasil{
 	
 	private $STRING = '';
 
@@ -155,7 +155,6 @@ class /*Remessa*/BancoBrasil{
 	* 	@return 
 	*/
 	function salvaArquivo($caminho) {
-		//chmod($caminho, '0755');
 		$nm_arquivo = "Itau".date('YmdHi').".txt";
 		$caminho    = $caminho . $nm_arquivo;
 		file_put_contents($caminho, $this->STRING);
@@ -237,101 +236,101 @@ class /*Remessa*/BancoBrasil{
 								 $cpf_cnpj, $nm_pagador, $endereco_pagador, $bairro_pagador, $cep_pagador, $nm_cidade_pagador, $uf_pagador, $observacoes, $nr_dias_protesto, $nr_sequencia_registro){
 		
 								
-		$this->escreveLinha('7' //Identificação do Registro Detalhe: 7 (sete)
-							//Tipo de Inscrição do Cedente (01 FÍSICA/ 02 JURIDICA)
+		$this->escreveLinha('7' 
+							
 							.$this->formataCampoNumerico($this->identificacaoCPFCNPJ($cpf_cnpj_cedente),2)
-							//Número do CPF/CNPJ do Cedente 
-							.$this->formataCampoNumerico($cpf_cnpj_cedente,14)//09110655000197
-							//Prefixo da Agência 
-							.$this->formataCampoNumerico($cd_agencia,4)//2733
-							//Dígito Verificador - D.V. - do Prefixo da Agência 
-							.$this->formataCampoString($this->getAgenciaDV($cd_agencia),1)//2
-							.$this->formataCampoNumerico(substr($cd_ctacor, 0, -1),8)//00228214
-							//Dígito Verificador - D.V. - do Número da Conta Corrente do Cedente
-							.$this->formataCampoString($this->getContaDV($cd_ctacor),1)//4
-							//Número do Convênio de Cobrança do Cedente
-							.$this->formataCampoNumerico($cd_convenio,7)//2572985
-							//Código de Controle da Empresa 
-							.$this->formataCampoString($cd_titulo,25)//106762   
-							//Nosso-Número 
-							.$this->formataCampoNumerico($this->getNossoNumero($cd_carteira, $cd_convenio, $cd_bloqueto),17)//25729850000015038
-							//Número da Prestação: “00” (Zeros)
+							
+							.$this->formataCampoNumerico($cpf_cnpj_cedente,14)
+							
+							.$this->formataCampoNumerico($cd_agencia,4)
+							
+							.$this->formataCampoString($this->getAgenciaDV($cd_agencia),1)
+							.$this->formataCampoNumerico(substr($cd_ctacor, 0, -1),8)
+							
+							.$this->formataCampoString($this->getContaDV($cd_ctacor),1)
+							
+							.$this->formataCampoNumerico($cd_convenio,7)
+							
+							.$this->formataCampoString($cd_titulo,25)
+							
+							.$this->formataCampoNumerico($this->getNossoNumero($cd_carteira, $cd_convenio, $cd_bloqueto),17)
+							
 							.$this->formataCampoNumerico('00',2)
-							//Grupo de Valor: “00” (Zeros)
+							
 							.$this->formataCampoNumerico('00',2)
-							//Complemento do Registro: “Brancos”
-							.$this->espacosBrancos(3)// --
-							.$this->espacosBrancos(1)// -Indicativo de Mensagem ou Sacador/Avalista 
-							.$this->espacosBrancos(3)// --
-							//Variação da Carteira 
-							.$this->formataCampoNumerico($variacao_carteira,3)//002
-							//Conta Caução: “0” (Zero)
-							.$this->formataCampoNumerico('00',1)
-							//Número do Borderô: “000000” (Zeros) 
-							.$this->formataCampoNumerico('000000',6)
-							//Tipo de Cobrança (04DSC/08VDR/02VIN/BRANCOS)
-							.$this->formataCampoString(TIPO_COBRANCA_VAZIO,5)//04DSC
-							//Carteira de Cobrança 
-							.$this->formataCampoNumerico($cd_carteira,2)//18
-							//Comando (REMESSA/BAIXA)
-							.$this->formataCampoNumerico($cd_comando,2)//01
-							//Seu Número/Número do Título Atribuído pelo Cedente
-							.$this->formataCampoString($cd_titulo,10)//15038     
-							//Data de Vencimento 
-							.$this->formataCampoNumerico($dt_vencto,6) //230916
-							//Valor do Título 
-							.$this->formataCampoNumerico($vl_titulo,13)
-							//Número do Banco: “001”
-							.$this->formataCampoNumerico('001',3)
-							//Prefixo da Agência Cobradora: “0000” 
-							.$this->formataCampoNumerico('0000',4)
-							//Dígito Verificador do Prefixo da Agência Cobradora: “Brancos”
-							.$this->espacosBrancos(1)// --
-							//Espécie de Titulo (12 - Duplicata de Serviço)
-							.$this->formataCampoNumerico(ESPECIE_TITULO,2)//12
-							//Aceite do Título: (A-ACEITE/N-NEGADO)
-							.$this->formataCampoString(ACEITO,1)//A
-							//Data de Emissão: Informe no formato “DDMMAA”
-							.$this->formataCampoNumerico($dt_emissao,6)//210716
-							//Instrução Codificada 
-							.$this->formataCampoNumerico($cd_instrucao1,2)//00
-							.$this->formataCampoNumerico($cd_instrucao2,2)//00
-							//Juros de Mora por Dia de Atraso 
-							.$this->formataCampoNumerico($vl_taxa_juros,13)//00000000013
-							//Data Limite para Concessão de Desconto/Data de Operação do BBVendor/Juros de Mora.
-							.$this->formataCampoNumerico($dt_desconto,6)//000000
-							//Valor do Desconto 
-							.$this->formataCampoNumerico($vl_desconto,13)//00000000000
-							//Valor do IOF/Qtde Unidade Variável. 
-							.$this->formataCampoNumerico($vl_iof,13)//00000000000
-							//Valor do Abatimento 
-							.$this->formataCampoNumerico($vl_abatimento,13)//00000000000
-							//Tipo de Inscrição do Sacado 
-							.$this->formataCampoNumerico($this->identificacaoCPFCNPJ($cpf_cnpj),2)//01
-							//Número do CNPJ ou CPF do Sacado
-							.$this->formataCampoNumerico($cpf_cnpj,14)//00001528230000
-							//Nome do Sacado 
-							.$this->formataCampoString(strtoupper($nm_pagador),37)//Andrew cristiano                     --
-							//Complemento do Registro: “Brancos”
+							
 							.$this->espacosBrancos(3)
-							//Endereço do Sacado
-							.$this->formataCampoString(strtoupper($endereco_pagador),40)//Av. mariluz norte 
-							//Bairro do Sacado
-							.$this->formataCampoString(strtoupper($bairro_pagador),12)//Mariluz nort
-							//CEP do Endereço do Sacado 
-							.$this->formataCampoNumerico($cep_pagador,8)//95625000
-							//Cidade do Sacado
-							.$this->formataCampoString(strtoupper($nm_cidade_pagador),15)//Imbe           --
-							//UF da Cidade do Sacado
-							.$this->formataCampoString($uf_pagador,2)//RS
-							//Observações/Mensagem ou Sacador/Avalista
+							.$this->espacosBrancos(1)
+							.$this->espacosBrancos(3)
+							
+							.$this->formataCampoNumerico($variacao_carteira,3)
+							
+							.$this->formataCampoNumerico('00',1)
+							
+							.$this->formataCampoNumerico('000000',6)
+							
+							.$this->formataCampoString(TIPO_COBRANCA_VAZIO,5)
+							//
+							.$this->formataCampoNumerico($cd_carteira,2)
+							
+							.$this->formataCampoNumerico($cd_comando,2)
+							
+							.$this->formataCampoString($cd_titulo,10)
+							
+							.$this->formataCampoNumerico($dt_vencto,6) 
+							
+							.$this->formataCampoNumerico($vl_titulo,13)
+							
+							.$this->formataCampoNumerico('001',3)
+							
+							.$this->formataCampoNumerico('0000',4)
+							
+							.$this->espacosBrancos(1)
+							
+							.$this->formataCampoNumerico(ESPECIE_TITULO,2)
+							
+							.$this->formataCampoString(ACEITO,1)
+							
+							.$this->formataCampoNumerico($dt_emissao,6)
+							
+							.$this->formataCampoNumerico($cd_instrucao1,2)
+							.$this->formataCampoNumerico($cd_instrucao2,2)
+							
+							.$this->formataCampoNumerico($vl_taxa_juros,13)
+							
+							.$this->formataCampoNumerico($dt_desconto,6)
+							
+							.$this->formataCampoNumerico($vl_desconto,13)
+							
+							.$this->formataCampoNumerico($vl_iof,13)
+							
+							.$this->formataCampoNumerico($vl_abatimento,13)
+							
+							.$this->formataCampoNumerico($this->identificacaoCPFCNPJ($cpf_cnpj),2)
+							
+							.$this->formataCampoNumerico($cpf_cnpj,14)
+							
+							.$this->formataCampoString(strtoupper($nm_pagador),37)
+							
+							.$this->espacosBrancos(3)
+							
+							.$this->formataCampoString(strtoupper($endereco_pagador),40)
+							
+							.$this->formataCampoString(strtoupper($bairro_pagador),12)
+							
+							.$this->formataCampoNumerico($cep_pagador,8)
+							
+							.$this->formataCampoString(strtoupper($nm_cidade_pagador),15)
+							
+							.$this->formataCampoString($uf_pagador,2)
+							
 							.$this->espacosBrancos(40)
-							//Número de Dias Para Protesto
-							.$this->formataCampoString($nr_dias_protesto,2)//  --
-							//Complemento do Registro: “Brancos”
-							.$this->espacosBrancos(1)// --
-							//Seqüencial de Registro
-							.$this->formataCampoNumerico($nr_sequencia_registro,6));//000002
+							
+							.$this->formataCampoString($nr_dias_protesto,2)
+							
+							.$this->espacosBrancos(1)
+							
+							.$this->formataCampoNumerico($nr_sequencia_registro,6));
 	}
 	/**
 	 * [registroTrailler description]
@@ -350,7 +349,7 @@ class /*Remessa*/BancoBrasil{
 	 * @return [type]        [description]
 	 */
 	private function formataDinheiro($valor){
-        return $valor ? number_format($valor, 2, /*'.'*/'', '') : '';
+        return $valor ? number_format($valor, 2, '', '') : '';
     }
 	/**
 	 * [getAgenciaDV description]
